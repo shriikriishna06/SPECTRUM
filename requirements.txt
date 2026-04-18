@@ -1,0 +1,14 @@
+# backend
+fastapi==0.117.1
+# server
+uvicorn[standard]==0.37.0
+# ORM (db)
+sqlalchemy==2.0.45
+# env variables
+python-dotenv==1.1.1
+# rate limiting
+slowapi==0.1.9
+# async api requests
+httpx==0.28.1
+# api (gemini)
+google-genai==1.39.1
