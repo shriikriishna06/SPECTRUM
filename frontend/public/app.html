@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum - Setup Profile</title>
+    <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { deepBlack: '#050505', brandCyan: '#22d3ee', brandViolet: '#7c3aed' },
+                    animation: {
+                        'wave': 'wave-glow 1.2s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes wave-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scaleY(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1.2);
+            }
+        }
+
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(20px, -20px) scale(1.1);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite alternate;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .select-pill {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .select-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .select-pill.selected {
+            background: #22d3ee;
+            color: black;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+            border-color: #22d3ee;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .view-section.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-deepBlack text-white w-screen h-screen overflow-hidden selection:bg-brandCyan selection:text-black">
+
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-900/40 rounded-full blur-[100px] animate-blob">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-violet-900/40 rounded-full blur-[100px] animate-blob"
+            style="animation-delay: 2s"></div>
+    </div>
+    <div class="fixed inset-0 z-[1] opacity-10 pointer-events-none noise-bg"></div>
+
+    <div class="relative min-h-screen flex flex-col w-full">
+        <div class="absolute inset-0 z-[1] opacity-10 pointer-events-none noise-bg"></div>
+
+        <nav
+            class="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex justify-center items-center px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_20px_rgba(124,58,237,0.4)] shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-shadow">
+            <div class="text-xl md:text-2xl font-extrabold tracking-tight flex items-center gap-3">
+                <div class="flex gap-[2px] items-center h-4">
+                    <div class="w-1.5 h-3 bg-cyan-400 rounded-full animate-wave shadow-[0_0_8px_#22d3ee]"
+                        style="animation-delay: 0ms"></div>
+                    <div class="w-1.5 h-6 bg-violet-400 rounded-full animate-wave shadow-[0_0_8px_#a78bfa]"
+                        style="animation-delay: 400ms"></div>
+                    <div class="w-1.5 h-4 bg-fuchsia-400 rounded-full animate-wave shadow-[0_0_8px_#e879f9]"
+                        style="animation-delay: 800ms"></div>
+                </div>
+                <span
+                    class="bg-gradient-to-r from-cyan-200 via-white to-violet-200 bg-clip-text text-transparent select-none">
+                    SPECTRUM
+                </span>
+            </div>
+        </nav>
+
+        <main
+            class="relative z-10 w-full flex-grow flex flex-col justify-center items-center p-4 pt-32 overflow-y-auto no-scrollbar">
+
+            <div id="view-onboarding"
+                class="view-section active flex-col w-full max-w-lg glass-panel p-6 md:p-8 rounded-3xl shadow-2xl m-auto">
+
+                <div class="w-full h-1 bg-white/10 rounded-full mb-8">
+                    <div id="ob-progress"
+                        class="h-full bg-brandCyan rounded-full transition-all duration-300 shadow-[0_0_10px_#22d3ee]"
+                        style="width: 16%"></div>
+                </div>
+
+                <form id="onboardingForm" class="w-full min-h-[300px] flex flex-col justify-between">
+
+                    <div id="step-1" class="step-container active">
+                        <h2 class="text-2xl font-bold mb-2">Who's watching?</h2>
+                        <div class="flex gap-4 mt-6" id="q-age">
+                            <div class="select-pill flex-1 border border-white/10 py-4 rounded-full text-center bg-white/5"
+                                data-value="kids" onclick="app.selectOption('q-age', this)">Kids
+                                <p class="text-sm text-gray-500 italic">(implementation pending)</p>
+                            </div>
+                            <div class="select-pill flex flex-1 items-center justify-center border border-white/10 py-4 rounded-full bg-white/5"
+                                data-value="adult" onclick="app.selectOption('q-age', this)">Adult</div>
+                        </div>
+                    </div>
+
+                    <div id="step-2" class="step-container">
+                        <h2 class="text-2xl font-bold mb-2">Languages</h2>
+                        <p class="text-sm text-gray-500 italic">(select one or more)</p>
+                        <div class="flex flex-wrap gap-2 mt-6" id="q-lang">
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="en" onclick="app.toggleOption(this)">English</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="hi" onclick="app.toggleOption(this)">Hindi</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="ta" onclick="app.toggleOption(this)">Tamil</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="te" onclick="app.toggleOption(this)">Telugu</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="kn" onclick="app.toggleOption(this)">Kannada</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="ml" onclick="app.toggleOption(this)">Malayalam</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="js" onclick="app.toggleOption(this)">Japanese</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="ko" onclick="app.toggleOption(this)">Korean</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="es" onclick="app.toggleOption(this)">Spanish</div>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="step-container">
+                        <h2 class="text-2xl font-bold mb-2">Favorite Genres</h2>
+                        <p class="text-sm text-gray-500 italic">(select one or more)</p>
+                        <div class="flex flex-wrap gap-2 mt-6" id="q-genres">
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="878" onclick="app.toggleOption(this)">Sci-Fi</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="53" onclick="app.toggleOption(this)">Thriller</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="27" onclick="app.toggleOption(this)">Horror</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="16" onclick="app.toggleOption(this)">Anime</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="18" onclick="app.toggleOption(this)">Drama</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="35" onclick="app.toggleOption(this)">Comedy</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="10749" onclick="app.toggleOption(this)">Romance</div>
+                        </div>
+                    </div>
+
+                    <div id="step-4" class="step-container">
+                        <h2 class="text-2xl font-bold mb-2">General Vibe</h2>
+                        <div class="flex flex-wrap gap-3 mt-6" id="q-vibe">
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="light" onclick="app.selectOption('q-vibe', this)">Optimistic & Cheerful
+                            </div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="emotional" onclick="app.selectOption('q-vibe', this)">Deep & Thoughtful
+                            </div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="intense" onclick="app.selectOption('q-vibe', this)">Adrenaline Junkie</div>
+                            <div class="select-pill border border-white/10 px-4 py-2 rounded-full text-sm bg-white/5"
+                                data-value="fun" onclick="app.selectOption('q-vibe', this)">Chill & Laid back</div>
+                        </div>
+                    </div>
+
+                    <div id="step-5" class="step-container">
+                        <h2 class="text-2xl font-bold mb-2">Preferred Length</h2>
+                        <div class="flex flex-col gap-3 mt-6" id="q-runtime">
+                            <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5" data-value="short"
+                                onclick="app.selectOption('q-runtime', this)">Short Movies (< 90m)</div>
+                                    <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5"
+                                        data-value="long" onclick="app.selectOption('q-runtime', this)">Feature Length
+                                        (2h+)</div>
+                                    <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5"
+                                        data-value="series" onclick="app.selectOption('q-runtime', this)">Binge-Worthy
+                                        Series
+                                        <p class="text-sm text-gray-500 italic">(implementation pending)</p>
+                                    </div>
+                                    <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5"
+                                        data-value="any" onclick="app.selectOption('q-runtime', this)">Anything goes
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div id="step-6" class="step-container">
+                            <h2 class="text-2xl font-bold mb-2">Risk Appetite</h2>
+                            <div class="flex flex-col gap-3 mt-6" id="q-risk">
+                                <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5 flex justify-between items-center group"
+                                    data-value="low" onclick="app.selectOption('q-risk', this)">
+                                    <span>Comfort Zone</span><span
+                                        class="text-gray-500 text-xs transition-colors group-hover:text-gray-300 italic">Stick
+                                        to what I love</span>
+                                </div>
+                                <div class="select-pill border border-white/10 p-3 rounded-xl bg-white/5 flex justify-between items-center group italic"
+                                    data-value="high" onclick="app.selectOption('q-risk', this)">
+                                    <span>Experimental</span><span
+                                        class="text-gray-500 text-xs transition-colors group-hover:text-gray-300">Surprise
+                                        me</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex gap-4">
+                            <button type="button" id="btn-back" onclick="app.prevStep()"
+                                class="flex-1 py-3 border border-white/20 rounded-xl hover:bg-white/10 transition-colors hidden font-semibold">Back</button>
+                            <button type="button" id="btn-next" onclick="app.nextStep()"
+                                class="flex-1 py-3 bg-brandCyan text-black font-bold rounded-xl hover:shadow-[0_0_15px_#22d3ee] transition-all">Next</button>
+                            <button type="button" id="btn-finish" onclick="app.finishWizard()"
+                                class="flex-1 py-3 bg-brandCyan text-black font-bold rounded-xl hover:shadow-[0_0_15px_#22d3ee] transition-all hidden">Finish</button>
+                            <button type="button" id="btn-loading"
+                                class="flex-1 flex justify-center items-center gap-2 py-3 bg-brandCyan/70 text-black font-bold rounded-xl cursor-not-allowed hidden transition-all"
+                                disabled>
+                                <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                Saving prefs...
+                            </button>
+                        </div>
+
+                </form>
+            </div>
+
+            <div id="view-success"
+                class="view-section flex-col items-center justify-center text-center max-w-md m-auto">
+                <div
+                    class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+                    <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold mb-2">Preferences Saved</h2>
+                <p class="text-gray-400 mb-8">Your unique AI taste profile is ready.</p>
+                <a href="session.html"
+                    class="px-10 py-4 bg-white/10 border border-white/20 rounded-full hover:bg-white/20 transition-all font-bold tracking-wide text-lg">Continue</a>
+            </div>
+
+        </main>
+    </div>
+    <script src="js/script.js"></script>
+    <script>
+        const app = {
+            currentStep: 1,
+            totalSteps: 6,
+
+            init: async () => {
+                const userId = localStorage.getItem("user_id");
+                if (userId && userId.trim()) {
+                    try {
+                        const res = await fetch(`http://127.0.0.1:8000/init/onboarded/${encodeURIComponent(userId)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.onboarded) {
+                                window.location.href = "session.html";
+                                return;
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error checking onboarding status:", e);
+                    }
+                }
+
+                app.updateWizardUI();
+            },
+
+            nextStep: () => {
+                if (!app.validateStep()) return;
+
+                if (app.currentStep < app.totalSteps) {
+                    app.currentStep++;
+                    app.updateWizardUI();
+                }
+            },
+
+            prevStep: () => {
+                if (app.currentStep > 1) {
+                    app.currentStep--;
+                    app.updateWizardUI();
+                }
+            },
+
+            validateStep: () => {
+                const stepEl = document.getElementById(`step-${app.currentStep}`);
+                const hasSelection = stepEl.querySelector('.selected');
+
+                if (!hasSelection) {
+                    alert("Please select an option to continue.");
+                    return false;
+                }
+                return true;
+            },
+
+            updateWizardUI: () => {
+                document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+
+                const currentEl = document.getElementById(`step-${app.currentStep}`);
+                if (currentEl) currentEl.classList.add('active');
+
+                const percent = (app.currentStep / app.totalSteps) * 100;
+                const progressEl = document.getElementById('ob-progress');
+                if (progressEl) progressEl.style.width = `${percent}%`;
+
+                const btnBack = document.getElementById('btn-back');
+                const btnNext = document.getElementById('btn-next');
+                const btnFinish = document.getElementById('btn-finish');
+
+                if (btnBack) btnBack.classList.toggle('hidden', app.currentStep === 1);
+
+                if (app.currentStep === app.totalSteps) {
+                    if (btnNext) btnNext.classList.add('hidden');
+                    if (btnFinish) btnFinish.classList.remove('hidden');
+                } else {
+                    if (btnNext) btnNext.classList.remove('hidden');
+                    if (btnFinish) btnFinish.classList.add('hidden');
+                }
+            },
+
+            finishWizard: async () => {
+                if (!app.validateStep()) return;
+
+                const btnBack = document.getElementById('btn-back');
+                const btnFinish = document.getElementById('btn-finish');
+                const btnLoading = document.getElementById('btn-loading');
+
+                if (btnBack) btnBack.classList.add('hidden');
+                if (btnFinish) btnFinish.classList.add('hidden');
+                if (btnLoading) btnLoading.classList.remove('hidden');
+
+                try {
+                    await submitOnboarding();
+
+                    document.getElementById('view-onboarding').classList.remove('active');
+                    document.getElementById('view-success').classList.add('active');
+
+                } catch (error) {
+                    console.error("API Error:", error);
+                    alert("Something went wrong saving your preferences. Please try again.");
+
+                    if (btnBack) btnBack.classList.remove('hidden');
+                    if (btnFinish) btnFinish.classList.remove('hidden');
+                } finally {
+                    if (btnLoading) btnLoading.classList.add('hidden');
+                }
+            },
+
+            selectOption: (groupId, element) => {
+                const parent = document.getElementById(groupId);
+                Array.from(parent.children).forEach(child => child.classList.remove('selected'));
+                element.classList.add('selected');
+
+                if (['q-age', 'q-runtime', 'q-vibe', 'q-risk'].includes(groupId)) {
+                    setTimeout(() => {
+                        app.nextStep();
+                    }, 350);
+                }
+            },
+
+            toggleOption: (element) => {
+                element.classList.toggle('selected');
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", app.init);
+    </script>
+</body>
+
+</html>

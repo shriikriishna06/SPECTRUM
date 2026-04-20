@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spectrum</title>
+    <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { deepBlack: '#050505', brandCyan: '#22d3ee', brandViolet: '#7c3aed' },
+                    animation: {
+                        'wave': 'wave-glow 1.2s ease-in-out infinite',
+                    }
+                },
+            },
+        }
+    </script>
+
+    <style>
+        @keyframes wave-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scaleY(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1.2);
+            }
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(40vw, -40vh) scale(1.5) rotate(45deg);
+            }
+
+            66% {
+                transform: translate(-30vw, 30vh) scale(0.7) rotate(-45deg);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .delay-4000 {
+            animation-delay: 4s;
+        }
+
+        .opacity-0-start {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-enter {
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .popular-lang-pill {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .popular-lang-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .popular-lang-pill.selected {
+            background: #22d3ee;
+            color: black;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+            border-color: #22d3ee;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #site-nav {
+            transition: padding 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
+        }
+
+        body.popular-route-active #site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            justify-content: center;
+            background: transparent;
+            border-bottom: 0;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        body.popular-route-active #site-nav-links {
+            display: none;
+        }
+
+        #site-logo {
+            transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease;
+        }
+
+        body.popular-route-active #site-logo {
+            padding: 0.65rem 0.9rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow:
+                0 0 22px rgba(34, 211, 238, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        #popular-screen-fade {
+            opacity: 0;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(34, 211, 238, 0.16), transparent 30%),
+                linear-gradient(180deg, rgba(5, 5, 5, 0.18), rgba(124, 58, 237, 0.2));
+            transition: opacity 0.32s ease;
+        }
+
+        body.popular-loading #popular-screen-fade {
+            opacity: 1;
+        }
+
+        #popular-results-wrap {
+            transition: opacity 0.32s ease, filter 0.32s ease;
+        }
+
+        body.popular-loading #popular-results-wrap {
+            opacity: 0.64;
+            filter: saturate(0.72) brightness(0.86);
+            pointer-events: none;
+        }
+
+        #popular-results-wrap.popular-view-active {
+            flex: 1 1 auto;
+            min-height: calc(100dvh - 5.5rem);
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes popular-marquee-scroll {
+            from {
+                transform: translate3d(0, 0, 0);
+            }
+
+            to {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+
+        .popular-marquee-outer {
+            overflow: hidden;
+            width: 100%;
+            touch-action: pan-y;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+        }
+
+        .popular-marquee-track {
+            display: flex;
+            width: max-content;
+            will-change: transform;
+            animation: popular-marquee-scroll linear infinite;
+        }
+
+        .popular-marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .popular-marquee-track.popular-marquee-track--rev {
+            animation-direction: reverse;
+        }
+
+        .popular-marquee-segment {
+            display: flex;
+            flex-shrink: 0;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .popular-marquee-segment {
+                gap: 1rem;
+            }
+        }
+
+        .popular-marquee-card {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popular-marquee-card>.glass-panel {
+            flex: 1 1 auto;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .popular-marquee-track {
+                animation: none !important;
+                flex-wrap: wrap;
+                width: 100% !important;
+                max-width: 100%;
+                justify-content: center;
+                row-gap: 0.75rem;
+            }
+
+            .popular-marquee-segment {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .popular-marquee-segment[aria-hidden="true"] {
+                display: none !important;
+            }
+
+            .popular-marquee-outer {
+                -webkit-mask-image: none;
+                mask-image: none;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-deepBlack text-white font-sans min-h-[100dvh] w-full flex flex-col overflow-x-hidden overflow-y-hidden relative selection:bg-brandCyan selection:text-black">
+
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-500 rounded-full mix-blend-screen filter blur-[80px] opacity-40 animate-blob">
+        </div>
+        <div
+            class="absolute top-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-violet-600 rounded-full mix-blend-screen filter blur-[80px] opacity-50 animate-blob delay-2000">
+        </div>
+        <div
+            class="absolute bottom-[-20%] left-[20%] w-[50vw] h-[50vw] bg-fuchsia-600 rounded-full mix-blend-screen filter blur-[80px] opacity-50 animate-blob delay-4000">
+        </div>
+    </div>
+    <div class="fixed inset-0 z-[1] opacity-15 pointer-events-none noise-bg"></div>
+    <div id="popular-screen-fade" class="fixed inset-0 z-30 pointer-events-none" aria-hidden="true"></div>
+
+    <div class="relative z-10 flex-1 w-full flex flex-col p-4 sm:p-8 lg:p-12">
+
+        <nav id="site-nav"
+            class="flex flex-col md:flex-row justify-center md:justify-between items-center w-full gap-4 md:gap-0 shrink-0 pt-2 md:pt-0">
+            <div id="site-logo"
+                class="text-xl md:text-2xl font-extrabold tracking-tight flex items-center gap-2 z-20 shrink-0">
+                <div class="flex gap-[2px] items-center h-4">
+                    <div class="w-1.5 h-3 bg-cyan-400 rounded-full animate-wave shadow-[0_0_8px_#22d3ee]"
+                        style="animation-delay: 0ms"></div>
+                    <div class="w-1.5 h-6 bg-violet-400 rounded-full animate-wave shadow-[0_0_8px_#a78bfa]"
+                        style="animation-delay: 400ms"></div>
+                    <div class="w-1.5 h-4 bg-fuchsia-400 rounded-full animate-wave shadow-[0_0_8px_#e879f9]"
+                        style="animation-delay: 800ms"></div>
+                </div>
+                <a href="page.html" onclick="navigateHome(event)" aria-label="Go to Spectrum home"><span
+                        class="bg-gradient-to-r from-cyan-200 via-white to-violet-200 bg-clip-text text-transparent select-none cursor-pointer">SPECTRUM</span></a>
+            </div>
+
+            <div id="site-nav-links" class="flex gap-6 md:gap-8 z-20 shrink-0">
+                <a
+                    class="text-gray-400 text-xs md:text-sm font-medium hover:text-white transition-colors relative group cursor-pointer">
+                    Handpicked
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-px bg-brandCyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a id="popular-nav-link" onclick="handlePopularClick(event)"
+                    class="text-gray-400 text-xs md:text-sm font-medium hover:text-white transition-colors relative group cursor-pointer">
+                    Popular Now
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-px bg-brandCyan transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+        </nav>
+
+        <section id="landing-hero-view"
+            class="flex-1 flex flex-col justify-center items-center text-center w-full max-w-5xl mx-auto z-20 py-8 md:py-12">
+
+            <div
+                class="fade-in-target opacity-0-start px-3 py-1.5 md:px-4 md:py-1.5 mb-5 md:mb-8 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[0.6rem] md:text-[0.7rem] tracking-[0.2em] uppercase text-cyan-300 font-bold">
+                AI-Powered Curation
+            </div>
+
+            <h1 class="fade-in-target opacity-0-start text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] md:leading-[0.95] mb-4 md:mb-6 mix-blend-overlay break-words w-full uppercase"
+                style="transition-delay: 200ms;">
+                THE <span
+                    class="bg-gradient-to-r from-cyan-200 via-white to-violet-200 bg-clip-text text-transparent">SMARTEST
+                    WAY</span><br />
+                TO DECIDE<br class="hidden sm:block" />
+                WHAT TO WATCH
+            </h1>
+
+            <p class="fade-in-target opacity-0-start max-w-[280px] sm:max-w-lg md:max-w-xl text-gray-400 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed mb-8 md:mb-10"
+                style="transition-delay: 300ms;">
+                Stop searching, Start watching. We analyze your mood and taste to recommend what you'll actually enjoy.
+            </p>
+
+            <div class="fade-in-target opacity-0-start flex flex-col sm:flex-row gap-4 md:gap-5 items-center w-full sm:w-auto px-4"
+                style="transition-delay: 400ms;">
+
+                <a id="magBtn" onclick="startWatching()"
+                    class="cursor-pointer group relative bg-white text-black px-8 py-3.5 md:px-10 md:py-4 text-sm md:text-base lg:text-lg font-extrabold rounded-full overflow-hidden flex items-center justify-center gap-2.5 w-full sm:w-auto shrink-0 hover:shadow-[0_0_15px_rgba(34,211,238,0.7),0_0_25px_rgba(124,58,237,0.7)]">
+                    <div
+                        class="absolute inset-0 bg-brandCyan translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0">
+                    </div>
+                    <span class="relative z-10 group-hover:text-black transition-colors duration-300">Start
+                        Watching</span>
+                    <svg class="relative z-10 w-4 h-4 group-hover:text-black transition-colors duration-300"
+                        viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <polygon points="5 3 19 12 5 21"></polygon>
+                    </svg>
+                </a>
+
+                <button
+                    class="flex items-center gap-2 text-gray-400 font-semibold text-xs md:text-sm hover:text-white transition-colors py-2 md:py-4 shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
+                    </svg>
+                    Explore Picks
+                </button>
+            </div>
+
+            <p class="hidden md:block fade-in-target opacity-0-start text-[10px] md:text-xs font-medium tracking-[0.2em] text-white/40 uppercase mt-8 lg:mt-12"
+                style="transition-delay: 500ms;">
+                No endless scrolling
+            </p>
+        </section>
+
+        <section id="popular-results-wrap" class="hidden relative z-20 w-full pb-8 sm:pb-12 pt-4 sm:pt-6">
+            <div id="popular-inner" class="flex flex-col w-full max-w-7xl mx-auto px-0 py-4 sm:py-8 flex-1 min-h-0">
+                <div class="flex flex-col gap-5 sm:gap-6 w-full mb-6 sm:mb-8 shrink-0">
+                    <button type="button" onclick="closePopularPageView()"
+                        class="group flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full text-xs sm:text-sm font-bold text-gray-300 hover:text-white transition-all hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:-translate-x-0.5 cursor-pointer w-fit touch-manipulation">
+                        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1 shrink-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back
+                    </button>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+                            <span
+                                class="bg-gradient-to-r from-cyan-200 via-white to-violet-200 bg-clip-text text-transparent">Popular</span>
+                            right now
+                        </h2>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-2 max-w-lg">Action, Thriller &amp; Comedy — tap a
+                            card for details.</p>
+                    </div>
+                    <div class="w-full min-w-0">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-widest text-violet-400 block mb-2">Language</span>
+                        <div class="overflow-x-auto no-scrollbar -mx-1 px-1 pb-1">
+                            <div id="popular-lang-bar"
+                                class="inline-flex flex-nowrap sm:flex-wrap sm:max-w-full gap-1.5 sm:gap-2 items-center py-0.5">
+                                <button type="button" data-lang="en" onclick="selectPopularLanguage('en')"
+                                    class="popular-lang-pill selected shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">English</button>
+                                <button type="button" data-lang="hi" onclick="selectPopularLanguage('hi')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Hindi</button>
+                                <button type="button" data-lang="ta" onclick="selectPopularLanguage('ta')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Tamil</button>
+                                <button type="button" data-lang="te" onclick="selectPopularLanguage('te')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Telugu</button>
+                                <button type="button" data-lang="ml" onclick="selectPopularLanguage('ml')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Malayalam</button>
+                                <button type="button" data-lang="kn" onclick="selectPopularLanguage('kn')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Kannada</button>
+                                <button type="button" data-lang="mr" onclick="selectPopularLanguage('mr')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Marathi</button>
+                                <button type="button" data-lang="bn" onclick="selectPopularLanguage('bn')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Bengali</button>
+                                <button type="button" data-lang="gu" onclick="selectPopularLanguage('gu')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Gujarati</button>
+                                <button type="button" data-lang="ja" onclick="selectPopularLanguage('ja')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Japanese</button>
+                                <button type="button" data-lang="ko" onclick="selectPopularLanguage('ko')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">Korean</button>
+                                <button type="button" data-lang="fr" onclick="selectPopularLanguage('fr')"
+                                    class="popular-lang-pill shrink-0 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs bg-white/5 touch-manipulation">French</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="popular-genres-root" class="flex flex-col gap-8 sm:gap-12 md:gap-16 w-full pb-6 sm:pb-8">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in-target');
+            setTimeout(() => {
+                elements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.classList.remove('opacity-0-start');
+                        el.classList.add('animate-enter');
+                    }, index * 100);
+                });
+            }, 100);
+        });
+
+        if (window.matchMedia("(hover: hover)").matches) {
+            const btn = document.getElementById('magBtn');
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        }
+    </script>
+</body>
+
+</html>

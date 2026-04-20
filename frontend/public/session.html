@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum - Daily Pick</title>
+    <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { deepBlack: '#050505', brandCyan: '#22d3ee', brandViolet: '#7c3aed' },
+                    animation: {
+                        'wave': 'wave-glow 1.2s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes wave-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scaleY(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1.2);
+            }
+        }
+
+        .noise-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(20px, -20px) scale(1.1);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite alternate;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            border-color: #22d3ee;
+            outline: none;
+        }
+
+        .select-pill {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .select-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .select-pill.selected {
+            background: #22d3ee;
+            color: black;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+            border-color: #22d3ee;
+        }
+
+        #profile-overlay {
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #profile-overlay.open {
+            transform: translateY(0);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .view-section.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        #view-form {
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+        }
+
+        #view-results {
+            align-items: flex-start;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-deepBlack text-white w-screen h-screen overflow-y-auto selection:bg-brandCyan selection:text-black">
+
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-900/40 rounded-full blur-[100px] animate-blob">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-violet-900/40 rounded-full blur-[100px] animate-blob"
+            style="animation-delay: 2s"></div>
+    </div>
+    <div class="fixed inset-0 z-[1] opacity-10 pointer-events-none noise-bg"></div>
+
+    <div class="relative min-h-screen flex flex-col w-full">
+        <div class="absolute inset-0 z-[1] opacity-10 pointer-events-none noise-bg"></div>
+
+        <nav
+            class="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex justify-center items-center px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_20px_rgba(124,58,237,0.4)] shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-shadow">
+            <div class="text-xl md:text-2xl font-extrabold tracking-tight flex items-center gap-3">
+                <div class="flex gap-[2px] items-center h-4">
+                    <div class="w-1.5 h-3 bg-cyan-400 rounded-full animate-wave shadow-[0_0_8px_#22d3ee]"
+                        style="animation-delay: 0ms"></div>
+                    <div class="w-1.5 h-6 bg-violet-400 rounded-full animate-wave shadow-[0_0_8px_#a78bfa]"
+                        style="animation-delay: 400ms"></div>
+                    <div class="w-1.5 h-4 bg-fuchsia-400 rounded-full animate-wave shadow-[0_0_8px_#e879f9]"
+                        style="animation-delay: 800ms"></div>
+                </div>
+
+                <span
+                    class="bg-gradient-to-r from-cyan-200 via-white to-violet-200 bg-clip-text text-transparent select-none">
+                    SPECTRUM
+                </span>
+
+            </div>
+        </nav>
+        <div class="fixed top-6 right-4 md:top-8 md:right-8 z-50">
+            <button id="profileBtn" onclick="toggleProfileMenu()"
+                class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:bg-white/10 flex items-center justify-center transition-all group cursor-pointer">
+                <svg class="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+            </button>
+
+            <div id="profileMenu"
+                class="absolute right-0 mt-3 w-56 glass-panel rounded-2xl shadow-2xl opacity-0 scale-95 pointer-events-none transition-all duration-200 ease-out origin-top-right overflow-hidden">
+
+                <div class="p-4 border-b border-white/5">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Account</p>
+                    <p class="text-sm font-semibold text-white truncate">Hi User✌🏻</p>
+                </div>
+
+                <div class="p-2">
+                    <button onclick="resetPreferences()"
+                        class="w-full text-left px-3 py-3 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors flex items-center gap-3 group cursor-pointer">
+                        <svg class="w-4 h-4 text-red-500/70 group-hover:text-red-400 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                        Reset Preferences
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <main class="relative z-10 w-full flex-grow flex flex-col p-4 overflow-y-auto no-scrollbar">
+
+            <div id="view-form"
+                class="view-section active flex-col w-full max-w-lg glass-panel p-8 rounded-3xl shadow-2xl m-auto">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-1">Let's Pick Something.</h2>
+                    <h3 class="text-gray-400 text-xs text-center">Set the vibe for this session.</h3>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-violet-400 mb-3 font-bold">1. What's
+                            your mood right now?</label>
+                        <div class="flex flex-wrap gap-2 mb-3" id="s-mood-presets">
+                            <div data-value="light"
+                                class="select-pill border border-white/10 px-4 py-2 rounded-full text-xs bg-white/5 cursor-pointer"
+                                onclick="ui.setMood(this, 'Light')">Light</div>
+                            <div data-value="intense"
+                                class="select-pill border border-white/10 px-4 py-2 rounded-full text-xs bg-white/5 cursor-pointer"
+                                onclick="ui.setMood(this, 'Intense')">Intense</div>
+                            <div data-value="emotional"
+                                class="select-pill border border-white/10 px-4 py-2 rounded-full text-xs bg-white/5 cursor-pointer"
+                                onclick="ui.setMood(this, 'Emotional')">Emotional</div>
+                            <div data-value="balanced"
+                                class="select-pill border border-white/10 px-4 py-2 rounded-full text-xs bg-white/5 cursor-pointer"
+                                onclick="ui.setMood(this, 'Balanced')">Balanced</div>
+                        </div>
+                        <input type="text" id="s-mood-input" placeholder="Or type your own vibe..."
+                            class="glass-input w-full p-4 rounded-xl text-sm placeholder-gray-500 focus:ring-0">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-violet-400 mb-3 font-bold">2.
+                            Language for this session?</label>
+                        <div class="flex flex-col gap-2" id="s-lang">
+                            <div data-value="primary_only"
+                                class="select-pill border border-white/10 px-4 py-3 rounded-full bg-white/5 flex justify-between items-center cursor-pointer"
+                                onclick="ui.selectOption('s-lang', this)">
+                                <span>Primary only</span> <span class="text-xs text-gray-500">Your saved
+                                    languages</span>
+                            </div>
+                            <div data-value="mixed_indian"
+                                class="select-pill border border-white/10 px-4 py-3 rounded-full bg-white/5 flex justify-between items-center cursor-pointer"
+                                onclick="ui.selectOption('s-lang', this)">
+                                <span>Mixed Indian</span> <span class="text-xs text-gray-500">Hindi, Tamil, etc.</span>
+                            </div>
+                            <div data-value="any"
+                                class="select-pill border border-white/10 px-4 py-3 rounded-full bg-white/5 flex justify-between items-center cursor-pointer"
+                                onclick="ui.selectOption('s-lang', this)">
+                                <span>Widest mix</span> <span class="text-xs text-gray-500">Saved + English +
+                                    Indian</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="submitSession()"
+                        class="w-full py-4 bg-brandViolet text-white font-extrabold text-lg rounded-full hover:shadow-[0_0_20px_#7c3aed] mt-4 flex justify-center items-center gap-2 transition-all active:scale-95 cursor-pointer">
+                        <span id="btn-text">Get recommendations</span>
+                        <svg id="btn-loader" class="hidden animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-results" class="view-section flex-col w-full max-w-7xl px-4 py-8 mx-auto mt-24">
+
+                <div class="flex justify-start items-center w-full mb-8">
+                    <button onclick="showView('view-form')"
+                        class="group flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full text-sm font-bold text-gray-300 hover:text-white transition-all hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:-translate-x-1 cursor-pointer w-fit">
+                        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back
+                    </button>
+                </div>
+
+                <div id="results-grid"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-8 w-full">
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        function toggleProfile() {
+            document.getElementById("profile-overlay")?.classList.toggle("open");
+        }
+
+        function showView(id) {
+            document.querySelectorAll(".view-section").forEach(v => {
+                v.classList.remove("active");
+            });
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add("active");
+                window.scrollTo(0, 0);
+            }
+        }
+
+        window.addEventListener('load', async () => {
+            const userId = localStorage.getItem("user_id");
+
+            if (!userId || !userId.trim()) {
+                window.location.href = "page.html";
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/init/onboarded/${encodeURIComponent(userId)}`);
+                if (!res.ok) {
+                    window.location.href = "page.html";
+                    return;
+                }
+
+                const data = await res.json();
+                if (!data.onboarded) {
+                    window.location.href = "app.html";
+                    return;
+                }
+            } catch (e) {
+                console.error("Error validating onboarding:", e);
+                window.location.href = "page.html";
+                return;
+            }
+
+            showView('view-form');
+        });
+
+        const ui = {
+
+            selectOption(groupId, element) {
+                const parent = document.getElementById(groupId);
+                if (!parent) return;
+
+                Array.from(parent.children).forEach(child =>
+                    child.classList.remove("selected")
+                );
+                element.classList.add("selected");
+            },
+
+            setMood(element, moodValue) {
+                const parent = document.getElementById("s-mood-presets");
+                if (parent) {
+                    Array.from(parent.children).forEach(child =>
+                        child.classList.remove("selected")
+                    );
+                }
+
+                element.classList.add("selected");
+
+                const input = document.getElementById("s-mood-input");
+                if (input) input.value = moodValue;
+            }
+
+        };
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('opacity-0');
+            menu.classList.toggle('scale-95');
+            menu.classList.toggle('pointer-events-none');
+        }
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('profileMenu');
+            const btn = document.getElementById('profileBtn');
+            if (menu && !menu.classList.contains('opacity-0') && !menu.contains(event.target) && !btn.contains(event.target)) {
+                toggleProfileMenu();
+            }
+        });
+
+    </script>
+</body>
+
+</html>
