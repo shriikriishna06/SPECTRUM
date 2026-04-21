@@ -12,7 +12,7 @@ app = FastAPI(title="Movie Recommendation SaaS")
 #CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://spectrumx.netlify.app"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
