@@ -6,7 +6,7 @@ SPECTRUM is an AI-powered movie recommendation web app that helps users decide w
 - TMDB movie data  
 - Streaming availability  
 - AI-based ranking<br>
-Live on:<br>
+Live on: https://spectrumx.netlify.app<br>
 
 ---
 ## 🚀 Features
