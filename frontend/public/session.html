@@ -316,7 +316,7 @@
             }
 
             try {
-                const res = await fetch(`http://127.0.0.1:8000/init/onboarded/${encodeURIComponent(userId)}`);
+                const res = await fetch(`https://spectrumx.duckdns.org/init/onboarded/${encodeURIComponent(userId)}`);
                 if (!res.ok) {
                     window.location.href = "index.html";
                     return;

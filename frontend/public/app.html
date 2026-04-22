@@ -328,7 +328,7 @@
                 const userId = localStorage.getItem("user_id");
                 if (userId && userId.trim()) {
                     try {
-                        const res = await fetch(`http://127.0.0.1:8000/init/onboarded/${encodeURIComponent(userId)}`);
+                        const res = await fetch(`https://spectrumx.duckdns.org/init/onboarded/${encodeURIComponent(userId)}`);
                         if (res.ok) {
                             const data = await res.json();
                             if (data.onboarded) {
