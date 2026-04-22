@@ -162,6 +162,7 @@ docker pull shrikrishnarprabhu/spectrum
 Run:
 ```bash 
 docker run -p 8000:8000 --env-file .env shrikrishnarprabhu/spectrum
+```
 ---
 
 ## ⚡ Recommendation Pipeline
