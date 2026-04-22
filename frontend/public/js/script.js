@@ -380,7 +380,7 @@ async function submitSession() {
   if (loader) loader.classList.remove("hidden");
 
   try {
-    const res = await fetch(`${API_BASE}/recommend`, {
+    const res = await fetch(`${API_BASE}/recommend/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
