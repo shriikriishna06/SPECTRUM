@@ -311,14 +311,14 @@
             const userId = localStorage.getItem("user_id");
 
             if (!userId || !userId.trim()) {
-                window.location.href = "page.html";
+                window.location.href = "index.html";
                 return;
             }
 
             try {
                 const res = await fetch(`http://127.0.0.1:8000/init/onboarded/${encodeURIComponent(userId)}`);
                 if (!res.ok) {
-                    window.location.href = "page.html";
+                    window.location.href = "index.html";
                     return;
                 }
 
@@ -329,7 +329,7 @@
                 }
             } catch (e) {
                 console.error("Error validating onboarding:", e);
-                window.location.href = "page.html";
+                window.location.href = "index.html";
                 return;
             }
 
