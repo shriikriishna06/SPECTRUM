@@ -1,4 +1,4 @@
-const API_BASE = "http://54.253.243.218:8000";
+const API_BASE = "https://spectrumx.duckdns.org:8000";
 
 function escapeHtml(str) {
   if (str == null) return "";
