@@ -47,6 +47,7 @@ Live on: https://spectrumx.netlify.app<br>
 - Pydantic
 - HTTPX (async)
 - SlowAPI (rate limiting)
+- AWS (EC2) for hosting
 
 ### APIs
 - TMDB API
