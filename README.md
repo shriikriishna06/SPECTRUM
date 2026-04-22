@@ -43,9 +43,8 @@ Live on: https://spectrumx.netlify.app<br>
 ### Backend
 - FastAPI
 - SQLAlchemy
-- PostgreSQL
-- Pydantic
-- HTTPX (async)
+- PostgreSQL (supabase)
+- HTTPX (async req. handling)
 - SlowAPI (rate limiting)
 - AWS (EC2) for hosting
 
