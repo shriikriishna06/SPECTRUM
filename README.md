@@ -7,6 +7,7 @@ SPECTRUM is an AI-powered movie recommendation web app that helps users decide w
 - Streaming availability  
 - AI-based ranking<br>
 Live on: https://spectrumx.netlify.app<br>
+⚠️IMP NOTE: Used GEMINI API(free tier), CORE tool may not be accessible.
 
 ---
 ## 🚀 Features
@@ -99,7 +100,7 @@ SPECTRUM/
 │ │
 │ └── public/
 │ │
-│ ├── page.html                # Landing page + Popular section
+│ ├── index.html                # Landing page + Popular section
 │ ├── app.html                 # Onboarding 
 │ ├── session.html             # Recommendation page
 │
