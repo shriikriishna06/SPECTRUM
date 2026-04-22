@@ -143,7 +143,8 @@ use python http server or any live servers
 ---
 
 ## 🐳 Docker 
-Note: Docker setup required<br> 
+Note: Docker setup required<br>
+For remote setup:<br>
 Build:
 ```bash
 docker build -f backend/dockerFile -t spectrum .
@@ -152,6 +153,15 @@ Run:
 ```bash
 docker run -p 8000:8000 --env-file .env spectrum
 ```
+
+Using docker hub:<br>
+Pull image:
+```bash
+docker pull shrikrishnarprabhu/spectrum
+```
+Run:
+```bash 
+docker run -p 8000:8000 --env-file .env shrikrishnarprabhu/spectrum
 ---
 
 ## ⚡ Recommendation Pipeline
