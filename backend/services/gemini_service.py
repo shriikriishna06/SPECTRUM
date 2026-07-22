@@ -9,6 +9,7 @@ from backend.services.tmdb_service import GENRE_MAP
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
 _GENRE_ID_TO_NAME = {v: k for k, v in GENRE_MAP.items()}
 
@@ -78,7 +79,7 @@ async def analyze_taste(preferences: dict):
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=GEMINI_MODEL,
             contents=PROMPT
         )
 
@@ -176,7 +177,7 @@ async def rank_movie_candidates(candidates: list, prefs, session: dict, language
     try:
         def _call_gemini():
             return client.models.generate_content(
-                model="gemini-2.5-flash",
+                model=GEMINI_MODEL,
                 contents=prompt,
             )
         
